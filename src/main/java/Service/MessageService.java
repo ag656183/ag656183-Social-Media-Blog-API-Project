@@ -21,5 +21,11 @@ public class MessageService {
         }
         return messageDAO.createMessage(message);
     }
+
+
+    // Get all messages
+    public List<Message> getAllMessages() {
+        return messageDAO.getAllMessages();
+    }
     
 }

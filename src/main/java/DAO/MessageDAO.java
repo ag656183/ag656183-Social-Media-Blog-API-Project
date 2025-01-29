@@ -36,6 +36,28 @@ public class MessageDAO {
     }
 
 
-    
+    // Get all messages
+    public List<Message> getAllMessages() {
+        List<Message> messages = new ArrayList<>();
+        String sql = "SELECT * FROM message";
+
+        try(Connection connection = ConnectionUtil.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()) {
+                messages.add(new Message(
+                        rs.getInt("message_id"),
+                        rs.getInt("posted_by"),
+                        rs.getString("message_text"),
+                        rs.getLong("time_posted_epoch")
+                ));
+            }
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
+
+        return messages;
+    }
     
 }

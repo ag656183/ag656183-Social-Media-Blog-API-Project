@@ -35,12 +35,12 @@ public class AccountDAO {
 
 
     // Get account by account_id
-    public Optional<Account> getAccountByID(int accountId) {
-        String sql = "SELECT * FROM account WHERE account_id = ?";
+    public Optional<Account> getAccountByUsername(String username) {
+        String sql = "SELECT * FROM account WHERE username = ?";
 
         try(Connection connection = ConnectionUtil.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, accountId);
+            preparedStatement.setString(1, username);
 
             ResultSet rs = preparedStatement.executeQuery();
 

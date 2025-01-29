@@ -112,7 +112,7 @@ public class SocialMediaController {
 
 
     // Get messages by ID
-    private void getMessageByID(Context ctx) {
+    private void getMessagesByID(Context ctx) {
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
         Optional<Message> message = messageService.getMessageByID(messageId);
 
@@ -135,6 +135,13 @@ public class SocialMediaController {
         else {
             ctx.status(400);
         }
+    }
+
+    // Update message
+    private void updateMessage(Context ctx) {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id:"));
+        Message newMessageData = ctx.bodyAsClass(Message.class);
+        Optional<Message> updatedMessage = messageService.updateMessage(newMessageData, messageId);
     }
 
 

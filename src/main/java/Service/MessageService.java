@@ -38,5 +38,14 @@ public class MessageService {
     // Delete message
     public boolean deleteMessage(int messageId) {
         return messageDAO.deleteMessage(messageId);
-    }    
+    }
+
+
+    // Update message
+    public boolean updateMessage(int messageId) {
+        return messageDAO.deleteMessage(messageId);
+    }
+
+
+    
 }

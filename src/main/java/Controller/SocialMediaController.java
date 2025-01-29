@@ -114,7 +114,7 @@ public class SocialMediaController {
     // Get messages by ID
     private void getMessageByID(Context ctx) {
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
-        Optional<Message> message = messageService.getMessageByID(messageID);
+        Optional<Message> message = messageService.getMessageByID(messageId);
 
         if(message.isPresent()) {
             ctx.json(message.get());

@@ -4,7 +4,6 @@ import Model.Account;
 import Util.ConnectionUtil;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class AccountDAO {
@@ -14,7 +13,7 @@ public class AccountDAO {
         String sql = " INSERT INTO account(username, password) VALUES(?, ?)";
 
         try(Connection connection = ConnectionUtil.getConnection()) {
-            PreparedStatement preparedStatement = prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, account.getUsername());
             preparedStatement.setString(2, account.getPassword());
@@ -36,4 +35,27 @@ public class AccountDAO {
 
 
     // Get account by account_id
+    public Optional<Account> getAccountByID(int accountId) {
+        String sql = "SELECT * FROM account WHERE account_id = ?";
+
+        try(Connection connection = ConnectionUtil.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, accountId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if(rs.next()) {
+                return Optional.of(new Account(
+                        rs.getInt("account_id"),
+                        rs.getString("username"),
+                        rs.getString("password")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+    }
+
 }

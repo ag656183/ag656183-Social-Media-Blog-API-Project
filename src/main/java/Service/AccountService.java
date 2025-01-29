@@ -34,7 +34,7 @@ public class AccountService {
 
     // Authenticate user by checking if username and password match a stored account
     public Optional<Account> login(String username, String password) {
-        Optional<Account> existingAccount = account(DAO.getAccountByUsername(username));
+        Optional<Account> existingAccount = accountDAO.getAccountByUsername(username);
 
         if(existingAccount.isPresent() && existingAccount.get().getPassword().equals(password)) {
             return existingAccount;

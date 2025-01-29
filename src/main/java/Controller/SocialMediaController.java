@@ -68,7 +68,7 @@ public class SocialMediaController {
         Optional<Account> createdAccount = accountService.register(account);
 
         if(createdAccount.isPresent()) {
-            ctx.json(createdAccount.get());
+            ctx.status(200).json(createdAccount);
         }
         else {
             ctx.status(400);
@@ -82,7 +82,7 @@ public class SocialMediaController {
         Optional<Account> authenticatedUser = accountService.login(account.getUsername(), account.getPassword());
 
         if(authenticatedUser.isPresent()) {
-            ctx.json(authenticatedUser.get());
+            ctx.status(200).json(authenticatedUser.get());
         }
         else {
             ctx.status(401);

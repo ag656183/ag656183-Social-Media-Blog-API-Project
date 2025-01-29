@@ -62,4 +62,87 @@ public class SocialMediaController {
     }
 
 
+    // Register User
+    private void registerUser(Context ctx) {
+        Account account = ctx.bodyAsClass(Account.class);
+        Optional<Account> createdAccount = accountService.register(account);
+
+        if(createdAccount.isPresent()) {
+            ctx.json(createdAccount.get());
+        }
+        else {
+            ctx.status(400);
+        }
+    }
+
+
+    // Login user
+    private void loginUser(Context ctx) {
+        Account account = ctx.bodyAsClass(Account.class);
+        Optional<Account> authenticatedUser = accountService.login(account.getUsername(), account.getPassword());
+
+        if(authenticatedUser.isPresent()) {
+            ctx.json(authenticatedUser.get());
+        }
+        else {
+            ctx.status(401);
+        }
+    }
+
+
+    // Create message
+    private void createMessage(Context ctx) {
+        Message message = ctx.bodyAsClass(Message.class);
+        Optional<Message> createdMessage = messageService.createMessage(message);
+
+        if(createdMessage.isPresent()) {
+            ctx.json(createdMessage.get());
+        }
+        else {
+            ctx.status(400);
+        }
+    }
+
+
+    // Get all messages
+    private void getAllMessages(Context ctx) {
+            List<Message> messages = messageService.getAllMessages();
+            ctx.json(messages);
+    }
+
+
+    // Get messages by ID
+    private void getMessageByID(Context ctx) {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Optional<Message> message = messageService.getMessageByID(messageID);
+
+        if(message.isPresent()) {
+            ctx.json(message.get());
+
+        }
+    }
+
+
+    // Delete message
+    private void deleteMessage(Context ctx) {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message newMessageData = ctx.bodyAsClass(Message.class);
+        Optional<Message> updatedMessage = messageService.updatedMessage(messageId, newMessageData);
+
+        if(updatedMessage.isPresent()) {
+            ctx.json(updatedMessage.get());
+        }
+        else {
+            ctx.status(400);
+        }
+    }
+
+
+    // Get message by user
+    private void getMessageByUser(Context ctx) {
+        int accountId = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> messages = messageService.getMessageByUser(accountId);
+        ctx.json(messages);
+    }
+
 }

@@ -12,7 +12,8 @@ public class AccountDAO {
     public Account createAccount(Account account) {
         String sql = " INSERT INTO account(username, password) VALUES(?, ?)";
 
-        try(Connection connection = ConnectionUtil.getConnection()) {
+        try {
+            Connection connection = ConnectionUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, account.getUsername());
@@ -38,7 +39,8 @@ public class AccountDAO {
     public Optional<Account> getAccountByUsername(String username) {
         String sql = "SELECT * FROM account WHERE username = ?";
 
-        try(Connection connection = ConnectionUtil.getConnection()) {
+        try {
+            Connection connection = ConnectionUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, username);
 

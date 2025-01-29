@@ -8,7 +8,6 @@ import Model.Message;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,21 +33,21 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.get("example-endpoint", this::exampleHandler);
         // User registration
-        app.post("/register", this::registerUser);
+        app.post("/register", this::registerUserHandler);
         // User Login
-        app.post("/login", this::loginUser);
+        app.post("/login", this::loginUserHandler);
         // Create Message
-        app.post("/messages", this::createMessage);
+        app.post("/messages", this::createMessageHandler);
         // Retrieve all messages
-        app.get("/messages", this::getAllMessages);
+        app.get("/messages", this::getAllMessagesHandler);
         // Retrieve messages by ID
-        app.get("/messages/{message_id}", this::getMessagesByID);
+        app.get("/messages/{message_id}", this::getMessagesByIDHandler);
         // Delete message
-        app.delete("messages/{message_id}", this::deleteMessage);
+        app.delete("messages/{message_id}", this::deleteMessageHandler);
         // Update message
-        app.patch("/messages/{message_id}", this::updateMessage);
+        app.patch("/messages/{message_id}", this::updateMessageHandler);
         // Retrieve all message by particular user
-        app.get("/accounts/{account_id/messages}", this::getMessagesByUser);
+        app.get("/accounts/{account_id/messages}", this::getMessagesByUserHandler);
 
         return app;
     }
@@ -63,7 +62,7 @@ public class SocialMediaController {
 
 
     // Register User
-    private void registerUser(Context ctx) {
+    private void registerUserHandler(Context ctx) {
         Account account = ctx.bodyAsClass(Account.class);
         Optional<Account> createdAccount = accountService.register(account);
 
@@ -77,7 +76,7 @@ public class SocialMediaController {
 
 
     // Login user
-    private void loginUser(Context ctx) {
+    private void loginUserHandler(Context ctx) {
         Account account = ctx.bodyAsClass(Account.class);
         Optional<Account> authenticatedUser = accountService.login(account.getUsername(), account.getPassword());
 
@@ -91,65 +90,50 @@ public class SocialMediaController {
 
 
     // Create message
-    private void createMessage(Context ctx) {
+    private void createMessageHandler(Context ctx) {
         Message message = ctx.bodyAsClass(Message.class);
-        Optional<Message> createdMessage = messageService.createMessage(message);
+        Message createdMessage = messageService.createMessage(message);
 
-        if(createdMessage.isPresent()) {
-            ctx.json(createdMessage.get());
-        }
-        else {
+        if (createdMessage != null) {
+            ctx.status(200).json(createdMessage);
+        } else {
             ctx.status(400);
         }
     }
 
 
     // Get all messages
-    private void getAllMessages(Context ctx) {
-            List<Message> messages = messageService.getAllMessages();
-            ctx.json(messages);
+    private void getAllMessagesHandler(Context ctx) {
+        ctx.json(messageService.getAllMessages());
     }
 
 
-    // Get messages by ID
-    private void getMessagesByID(Context ctx) {
-        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
-        Optional<Message> message = messageService.getMessageByID(messageId);
-
-        if(message.isPresent()) {
-            ctx.json(message.get());
-
-        }
+    // Get messages by ID handler
+    private void getMessagesByIDHandler(Context ctx) {
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        messageService.getMessageByID(id).ifPresentOrElse(ctx::json, () -> ctx.json(""));
     }
 
 
-    // Delete message
-    private void deleteMessage(Context ctx) {
-        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
-        Message newMessageData = ctx.bodyAsClass(Message.class);
-        Optional<Message> updatedMessage = messageService.updateMessage(messageId, newMessageData);
-
-        if(updatedMessage.isPresent()) {
-            ctx.json(updatedMessage.get());
-        }
-        else {
-            ctx.status(400);
-        }
-    }
-
-    // Update message
-    private void updateMessage(Context ctx) {
-        int messageId = Integer.parseInt(ctx.pathParam("message_id:"));
-        Message newMessageData = ctx.bodyAsClass(Message.class);
-        Optional<Message> updatedMessage = messageService.updateMessage(newMessageData, messageId);
+    // Delete message handler
+    private void deleteMessageHandler(Context ctx) {
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        ctx.status(200).json(messageService.deleteMessage(id) ? "Deleted" : "");
     }
 
 
-    // Get message by user
-    private void getMessagesByUser(Context ctx) {
-        int accountId = Integer.parseInt(ctx.pathParam("account_id"));
-        List<Message> messages = messageService.getMessagesByUser(accountId);
-        ctx.json(messages);
+    // Update message handler
+    private void updateMessageHandler(Context ctx) {
+        int id = Integer.parseInt(ctx.pathParam("message_id"));
+        String newText = ctx.body();
+        ctx.status(messageService.updateMessage(id, newText) ? 200 : 400);
+    }
+
+
+    // Get messages handler
+    private void getMessagesByUserHandler(Context ctx) {
+        int userId = Integer.parseInt(ctx.pathParam("account_id"));
+        ctx.json(messageService.getMessagesByUser(userId));
     }
 
 }

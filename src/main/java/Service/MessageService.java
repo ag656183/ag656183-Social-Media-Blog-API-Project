@@ -42,13 +42,13 @@ public class MessageService {
 
 
     // Update message
-    public boolean updateMessage(int messageId) {
-        return messageDAO.deleteMessage(messageId);
+    public boolean updateMessage(int messageId, String newText) {
+        return messageDAO.updateMessage(messageId, newText);
     }
 
 
     // Get message by user
-    public List<Message> getMessageByUser(int accountId) {
+    public List<Message> getMessagesByUser(int accountId) {
         return messageDAO.getMessagesByUser(accountId);
     }
 }

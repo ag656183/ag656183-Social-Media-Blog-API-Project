@@ -16,8 +16,8 @@ import java.util.Optional;
  * refer to prior mini-project labs and lecture materials for guidance on how a controller may be built.
  */
 public class SocialMediaController {
-    AccountService accountService;
-    MessageService messageService;
+    private final AccountService accountService;
+    private final MessageService messageService;
 
     public SocialMediaController() {
         this.accountService = new AccountService();
@@ -63,14 +63,24 @@ public class SocialMediaController {
 
     // Register User
     private void registerUserHandler(Context ctx) {
-        Account account = ctx.bodyAsClass(Account.class);
-        Optional<Account> createdAccount = accountService.register(account);
-
-        if(createdAccount.isPresent()) {
-            ctx.status(200).json(createdAccount);
-        }
-        else {
-            ctx.status(400);
+        try {
+            Account account = ctx.bodyAsClass(Account.class);
+    
+            // Check for invalid input
+            if (account.getUsername().isBlank() || account.getPassword().length() < 4) {
+                ctx.status(400);
+                return;
+            }
+    
+            Optional<Account> createdAccount = accountService.register(account);
+            if (createdAccount.isPresent()) {
+                ctx.status(200).json(createdAccount.get());
+            } else {
+                ctx.status(400);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ctx.status(500);
         }
     }
 

@@ -27,7 +27,8 @@ public class AccountService {
             return Optional.empty();
         }
 
-        return Optional.of(accountDAO.createAccount(account));
+        Account createdAccount = accountDAO.createAccount(account);
+        return createdAccount != null ? Optional.of(createdAccount) : Optional.empty();
     }
 
 

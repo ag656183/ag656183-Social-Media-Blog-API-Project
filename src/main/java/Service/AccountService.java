@@ -3,9 +3,8 @@ package Service;
 import DAO.AccountDAO;
 import Model.Account;
 
-
 import java.util.Optional;
-import java.util.List;
+
 
 public class AccountService {
     private final AccountDAO accountDAO;

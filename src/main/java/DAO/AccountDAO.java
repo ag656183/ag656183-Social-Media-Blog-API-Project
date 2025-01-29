@@ -1,50 +1,39 @@
 package DAO;
 
 import Model.Account;
-import Model.Message;
 import Util.ConnectionUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 public class AccountDAO {
 
-    // Get all accounts
-    public List<Account> getAllAccounts() {
-        Connection connection = ConnectionUtil.getConnection();
-        List<Account> accounts = new ArrayList<>();
+    // Create new account
+    public Account createAccount(Account account) {
+        String sql = " INSERT INTO account(username, password) VALUES(?, ?)";
 
-        try {
-            String sql = "Select * FROM account";
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
-                Account account = new Account(rs.getInt("account_id"), rs.getString("username"), rs.getString("password"));
-                accounts.add(account);
+        try(Connection connection = ConnectionUtil.getConnection()) {
+            PreparedStatement preparedStatement = prepareStatement(sql);
+
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getPassword());
+
+            int affectedRows = preparedStatement.executeUpdate();
+            if(affectedRows > 0) {
+                ResultSet rs = preparedStatement.getGeneratedKeys();
+                if(rs.next()) {
+                    int accountId = rs.getInt(1);
+                    return new Account(accountId, account.getUsername(), account.getPassword());
+                }
             }
-        } catch(SQLException e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        return accounts;
+        return null;
     }
 
-        // Get accound by ID
-        public Account getAccountByID(int id) {
-            Connection connection = ConnectionUtil.getConnection();
-    
-            try {
-                String sql = "SELECT * FROM account WHERE account_id = ?";
-                PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.setInt(1, id);
-    
-                ResultSet rs = preparedStatement.executeQuery();
-                while(rs.next()) {
-                    Account account = new Account(rs.getInt("account_id"), rs.getString())
-                }
-    
-            }
-        }
+
+    // Get account by account_id
 }

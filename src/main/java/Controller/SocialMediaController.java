@@ -48,7 +48,7 @@ public class SocialMediaController {
         // Update message
         app.patch("/messages/{message_id}", this::updateMessage);
         // Retrieve all message by particular user
-        app.get("/accounts/{account_id/messages}", this::getMessageByUser);
+        app.get("/accounts/{account_id/messages}", this::getMessagesByUser);
 
         return app;
     }
@@ -127,7 +127,7 @@ public class SocialMediaController {
     private void deleteMessage(Context ctx) {
         int messageId = Integer.parseInt(ctx.pathParam("message_id"));
         Message newMessageData = ctx.bodyAsClass(Message.class);
-        Optional<Message> updatedMessage = messageService.updatedMessage(messageId, newMessageData);
+        Optional<Message> updatedMessage = messageService.updateMessage(messageId, newMessageData);
 
         if(updatedMessage.isPresent()) {
             ctx.json(updatedMessage.get());
@@ -139,9 +139,9 @@ public class SocialMediaController {
 
 
     // Get message by user
-    private void getMessageByUser(Context ctx) {
+    private void getMessagesByUser(Context ctx) {
         int accountId = Integer.parseInt(ctx.pathParam("account_id"));
-        List<Message> messages = messageService.getMessageByUser(accountId);
+        List<Message> messages = messageService.getMessagesByUser(accountId);
         ctx.json(messages);
     }
 

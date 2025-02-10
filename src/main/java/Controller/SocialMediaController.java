@@ -7,6 +7,7 @@ import Model.Message;
 
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import java.util.List;
 
 
 /**
@@ -37,9 +38,9 @@ public class SocialMediaController {
         app.post("/login", this::loginUserHandler);
         // Create Message
         app.post("/messages", this::createMessageHandler);
-        /*
         // Retrieve all messages
         app.get("/messages", this::getAllMessagesHandler);
+        /*
         // Retrieve messages by ID
         app.get("/messages/{message_id}", this::getMessagesByIDHandler);
         // Delete message
@@ -101,13 +102,13 @@ public class SocialMediaController {
     }
 
 
-    /*
-    // Get all messages
     private void getAllMessagesHandler(Context ctx) {
-        ctx.json(messageService.getAllMessages());
+        List<Message> messages = messageService.getAllMessages();
+        ctx.json(messages); // Always return 200 OK with the message list (even if empty)
     }
 
 
+    /*
     // Get messages by ID handler
     private void getMessagesByIDHandler(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("message_id"));

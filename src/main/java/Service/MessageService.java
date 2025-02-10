@@ -3,9 +3,6 @@ package Service;
 import DAO.MessageDAO;
 import Model.Message;
 
-import java.util.List;
-import java.util.Optional;
-
 public class MessageService {
     private final MessageDAO messageDAO;
 
@@ -13,42 +10,19 @@ public class MessageService {
         this.messageDAO = new MessageDAO();
     }
 
-
-    // Create message
     public Message createMessage(Message message) {
-        if(message.getMessage_text().isBlank() || message.getMessage_text().length() > 255) {
+        // Validation: message text must not be blank or exceed 255 characters
+        if (message.getMessage_text() == null || message.getMessage_text().isBlank() || 
+            message.getMessage_text().length() > 255) {
             return null;
         }
-        return messageDAO.createMessage(message);
-    }
 
+        // Validation: posted_by must refer to an existing user
+        if (!messageDAO.doesUserExist(message.getPosted_by())) {
+            return null;
+        }
 
-    // Get all messages
-    public List<Message> getAllMessages() {
-        return messageDAO.getAllMessages();
-    }
-
-
-    // Get messages by ID
-    public Optional<Message> getMessageByID(int messageId) {
-        return messageDAO.getMessageByID(messageId);
-    }
-
-
-    // Delete message
-    public boolean deleteMessage(int messageId) {
-        return messageDAO.deleteMessage(messageId);
-    }
-
-
-    // Update message
-    public boolean updateMessage(int messageId, String newText) {
-        return messageDAO.updateMessage(messageId, newText);
-    }
-
-
-    // Get message by user
-    public List<Message> getMessagesByUser(int accountId) {
-        return messageDAO.getMessagesByUser(accountId);
+        // Save message and return the created object
+        return messageDAO.insertMessage(message);
     }
 }

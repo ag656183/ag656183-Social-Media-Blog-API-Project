@@ -35,9 +35,9 @@ public class SocialMediaController {
         app.post("/register", this::registerUserHandler);
         // User Login
         app.post("/login", this::loginUserHandler);
-         /*
         // Create Message
         app.post("/messages", this::createMessageHandler);
+        /*
         // Retrieve all messages
         app.get("/messages", this::getAllMessagesHandler);
         // Retrieve messages by ID
@@ -88,7 +88,6 @@ public class SocialMediaController {
     }
 
 
-    /*
     // Create message
     private void createMessageHandler(Context ctx) {
         Message message = ctx.bodyAsClass(Message.class);
@@ -102,6 +101,7 @@ public class SocialMediaController {
     }
 
 
+    /*
     // Get all messages
     private void getAllMessagesHandler(Context ctx) {
         ctx.json(messageService.getAllMessages());

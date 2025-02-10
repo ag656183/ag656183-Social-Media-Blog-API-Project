@@ -33,9 +33,9 @@ public class SocialMediaController {
         app.get("example-endpoint", this::exampleHandler);
         // User registration
         app.post("/register", this::registerUserHandler);
-        /*
         // User Login
         app.post("/login", this::loginUserHandler);
+         /*
         // Create Message
         app.post("/messages", this::createMessageHandler);
         // Retrieve all messages
@@ -75,21 +75,20 @@ public class SocialMediaController {
     }
 
 
-    /*
     // Login user
     private void loginUserHandler(Context ctx) {
         Account account = ctx.bodyAsClass(Account.class);
-        Optional<Account> authenticatedUser = accountService.login(account.getUsername(), account.getPassword());
-
-        if(authenticatedUser.isPresent()) {
-            ctx.status(200).json(authenticatedUser.get());
-        }
-        else {
-            ctx.status(401);
+        Account loggedInAccount = accountService.loginUser(account.getUsername(), account.getPassword());
+    
+        if (loggedInAccount != null) {
+            ctx.json(loggedInAccount);
+        } else {
+            ctx.status(401); // Unauthorized
         }
     }
 
 
+    /*
     // Create message
     private void createMessageHandler(Context ctx) {
         Message message = ctx.bodyAsClass(Message.class);

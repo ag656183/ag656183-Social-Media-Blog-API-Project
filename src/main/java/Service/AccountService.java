@@ -23,4 +23,12 @@ public class AccountService {
 
         return accountDAO.insertAccount(new Account(0, username, password)); // Insert user
     }
+
+    public Account loginUser(String username, String password) {
+        if (username == null || username.isBlank() || password == null) {
+            return null; // Invalid input
+        }
+    
+        return accountDAO.getAccountByUsernameAndPassword(username, password);
+    }
 }

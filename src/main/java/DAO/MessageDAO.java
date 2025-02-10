@@ -93,4 +93,35 @@ public class MessageDAO {
         }
         return null; // Message not found
     }
+
+    public Message deleteMessageById(int messageId) {
+        String selectSql = "SELECT * FROM Message WHERE message_id = ?";
+        String deleteSql = "DELETE FROM Message WHERE message_id = ?";
+    
+        try (Connection conn = ConnectionUtil.getConnection();
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql);
+             PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+    
+            // First, retrieve the message to return it after deletion
+            selectStmt.setInt(1, messageId);
+            ResultSet rs = selectStmt.executeQuery();
+            if (rs.next()) {
+                Message deletedMessage = new Message(
+                        rs.getInt("message_id"),
+                        rs.getInt("posted_by"),
+                        rs.getString("message_text"),
+                        rs.getLong("time_posted_epoch")
+                );
+    
+                // Now, delete the message
+                deleteStmt.setInt(1, messageId);
+                deleteStmt.executeUpdate();
+                
+                return deletedMessage; // Return the deleted message
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Message not found or deletion failed
+    }
 }

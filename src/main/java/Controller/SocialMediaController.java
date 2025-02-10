@@ -42,9 +42,9 @@ public class SocialMediaController {
         app.get("/messages", this::getAllMessagesHandler);
         // Retrieve messages by ID
         app.get("/messages/{message_id}", this::getMessagesByIdHandler);
-        /*
         // Delete message
         app.delete("messages/{message_id}", this::deleteMessageHandler);
+        /*
         // Update message
         app.patch("/messages/{message_id}", this::updateMessageHandler);
         // Retrieve all message by particular user
@@ -122,14 +122,20 @@ public class SocialMediaController {
     }
 
 
-    /*
     // Delete message handler
     private void deleteMessageHandler(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("message_id"));
-        ctx.status(200).json(messageService.deleteMessage(id) ? "Deleted" : "");
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message deletedMessage = messageService.deleteMessageById(messageId);
+
+        if (deletedMessage != null) {
+            ctx.json(deletedMessage); // Return deleted message JSON
+        } else {
+            ctx.status(200); // Return 200 with an empty response if message didn't exist
+        }
     }
 
 
+    /*
     // Update message handler
     private void updateMessageHandler(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("message_id"));

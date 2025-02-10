@@ -124,4 +124,40 @@ public class MessageDAO {
         }
         return null; // Message not found or deletion failed
     }
+
+    public Message updateMessageText(int messageId, String newText) {
+        String updateSql = "UPDATE Message SET message_text = ? WHERE message_id = ?";
+        String selectSql = "SELECT * FROM Message WHERE message_id = ?";
+    
+        try (Connection conn = ConnectionUtil.getConnection();
+             PreparedStatement updateStmt = conn.prepareStatement(updateSql);
+             PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+    
+            // Validate if message exists
+            selectStmt.setInt(1, messageId);
+            ResultSet rs = selectStmt.executeQuery();
+            if (!rs.next()) {
+                return null; // Message not found
+            }
+    
+            // Update message text
+            updateStmt.setString(1, newText);
+            updateStmt.setInt(2, messageId);
+            int affectedRows = updateStmt.executeUpdate();
+            
+            if (affectedRows > 0) {
+                // Return updated message
+                return new Message(
+                        rs.getInt("message_id"),
+                        rs.getInt("posted_by"),
+                        newText,
+                        rs.getLong("time_posted_epoch")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Update failed
+    }
+    
 }

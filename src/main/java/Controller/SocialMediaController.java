@@ -44,9 +44,9 @@ public class SocialMediaController {
         app.get("/messages/{message_id}", this::getMessagesByIdHandler);
         // Delete message
         app.delete("messages/{message_id}", this::deleteMessageHandler);
-        /*
         // Update message
         app.patch("/messages/{message_id}", this::updateMessageHandler);
+        /*
         // Retrieve all message by particular user
         app.get("/accounts/{account_id/messages}", this::getMessagesByUserHandler);
         */
@@ -135,15 +135,22 @@ public class SocialMediaController {
     }
 
 
-    /*
     // Update message handler
     private void updateMessageHandler(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("message_id"));
-        String newText = ctx.body();
-        ctx.status(messageService.updateMessage(id, newText) ? 200 : 400);
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message requestBody = ctx.bodyAsClass(Message.class);
+
+        Message updatedMessage = messageService.updateMessage(messageId, requestBody.getMessage_text());
+
+        if (updatedMessage != null) {
+            ctx.json(updatedMessage); // Return updated message JSON
+        } else {
+            ctx.status(400); // Return 400 if update failed
+        }
     }
 
 
+    /*
     // Get messages handler
     private void getMessagesByUserHandler(Context ctx) {
         int userId = Integer.parseInt(ctx.pathParam("account_id"));

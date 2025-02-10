@@ -39,4 +39,13 @@ public class MessageService {
     public Message deleteMessageById(int messageId) {
         return messageDAO.deleteMessageById(messageId);
     }
+
+    public Message updateMessage(int messageId, String newText) {
+        // Validation: message text must not be blank or exceed 255 characters
+        if (newText == null || newText.isBlank() || newText.length() > 255) {
+            return null;
+        }
+    
+        return messageDAO.updateMessageText(messageId, newText);
+    }
 }

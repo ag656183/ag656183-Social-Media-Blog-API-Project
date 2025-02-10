@@ -40,9 +40,9 @@ public class SocialMediaController {
         app.post("/messages", this::createMessageHandler);
         // Retrieve all messages
         app.get("/messages", this::getAllMessagesHandler);
-        /*
         // Retrieve messages by ID
-        app.get("/messages/{message_id}", this::getMessagesByIDHandler);
+        app.get("/messages/{message_id}", this::getMessagesByIdHandler);
+        /*
         // Delete message
         app.delete("messages/{message_id}", this::deleteMessageHandler);
         // Update message
@@ -102,20 +102,27 @@ public class SocialMediaController {
     }
 
 
+    // Get all messages
     private void getAllMessagesHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages); // Always return 200 OK with the message list (even if empty)
     }
 
 
-    /*
-    // Get messages by ID handler
-    private void getMessagesByIDHandler(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("message_id"));
-        messageService.getMessageByID(id).ifPresentOrElse(ctx::json, () -> ctx.json(""));
+    // Get all message by message id
+    private void getMessagesByIdHandler(Context ctx) {
+        int messageId = Integer.parseInt(ctx.pathParam("message_id"));
+        Message message = messageService.getMessageById(messageId);
+    
+        if (message != null) {
+            ctx.json(message);
+        } else {
+            ctx.status(200); // Return 200 with an empty response if message doesn't exist
+        }
     }
 
 
+    /*
     // Delete message handler
     private void deleteMessageHandler(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("message_id"));

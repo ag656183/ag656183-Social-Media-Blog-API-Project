@@ -4,25 +4,21 @@ import Model.Account;
 import Util.ConnectionUtil;
 
 import java.sql.*;
-import java.util.Optional;
 
 public class AccountDAO {
 
-    // Create new account
-    public Account createAccount(Account account) {
-        String sql = " INSERT INTO account(username, password) VALUES(?, ?)";
+    public Account insertAccount(Account account) {
+        String sql = "INSERT INTO Account (username, password) VALUES (?, ?)";
+        try (Connection conn = ConnectionUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        try {
-            Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, account.getUsername());
+            stmt.setString(2, account.getPassword());
 
-            preparedStatement.setString(1, account.getUsername());
-            preparedStatement.setString(2, account.getPassword());
-
-            int affectedRows = preparedStatement.executeUpdate();
-            if(affectedRows > 0) {
-                ResultSet rs = preparedStatement.getGeneratedKeys();
-                if(rs.next()) {
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
                     int accountId = rs.getInt(1);
                     return new Account(accountId, account.getUsername(), account.getPassword());
                 }
@@ -30,34 +26,22 @@ public class AccountDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
+    public boolean doesUsernameExist(String username) {
+        String sql = "SELECT COUNT(*) FROM Account WHERE username = ?";
+        try (Connection conn = ConnectionUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    // Get account by account_id
-    public Optional<Account> getAccountByUsername(String username) {
-        String sql = "SELECT * FROM account WHERE username = ?";
-
-        try {
-            Connection connection = ConnectionUtil.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, username);
-
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if(rs.next()) {
-                return Optional.of(new Account(
-                        rs.getInt("account_id"),
-                        rs.getString("username"),
-                        rs.getString("password")
-                ));
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return Optional.empty();
+        return false;
     }
-
 }

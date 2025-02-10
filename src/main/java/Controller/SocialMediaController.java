@@ -8,7 +8,6 @@ import Model.Message;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
-import java.util.Optional;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -34,6 +33,7 @@ public class SocialMediaController {
         app.get("example-endpoint", this::exampleHandler);
         // User registration
         app.post("/register", this::registerUserHandler);
+        /*
         // User Login
         app.post("/login", this::loginUserHandler);
         // Create Message
@@ -48,6 +48,7 @@ public class SocialMediaController {
         app.patch("/messages/{message_id}", this::updateMessageHandler);
         // Retrieve all message by particular user
         app.get("/accounts/{account_id/messages}", this::getMessagesByUserHandler);
+        */
 
         return app;
     }
@@ -63,28 +64,18 @@ public class SocialMediaController {
 
     // Register User
     private void registerUserHandler(Context ctx) {
-        try {
-            Account account = ctx.bodyAsClass(Account.class);
-    
-            // Check for invalid input
-            if (account.getUsername().isBlank() || account.getPassword().length() < 4) {
-                ctx.status(400);
-                return;
-            }
-    
-            Optional<Account> createdAccount = accountService.register(account);
-            if (createdAccount.isPresent()) {
-                ctx.status(200).json(createdAccount.get());
-            } else {
-                ctx.status(400);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            ctx.status(500);
+        Account account = ctx.bodyAsClass(Account.class);
+        Account createdAccount = accountService.registerUser(account.getUsername(), account.getPassword());
+
+        if (createdAccount != null) {
+            ctx.json(createdAccount);
+        } else {
+            ctx.status(400);
         }
     }
 
 
+    /*
     // Login user
     private void loginUserHandler(Context ctx) {
         Account account = ctx.bodyAsClass(Account.class);
@@ -145,5 +136,6 @@ public class SocialMediaController {
         int userId = Integer.parseInt(ctx.pathParam("account_id"));
         ctx.json(messageService.getMessagesByUser(userId));
     }
+    */
 
 }

@@ -46,10 +46,8 @@ public class SocialMediaController {
         app.delete("messages/{message_id}", this::deleteMessageHandler);
         // Update message
         app.patch("/messages/{message_id}", this::updateMessageHandler);
-        /*
         // Retrieve all message by particular user
-        app.get("/accounts/{account_id/messages}", this::getMessagesByUserHandler);
-        */
+        app.get("/accounts/{account_id}/messages", this::getMessagesByUserHandler);
 
         return app;
     }
@@ -150,12 +148,10 @@ public class SocialMediaController {
     }
 
 
-    /*
     // Get messages handler
     private void getMessagesByUserHandler(Context ctx) {
-        int userId = Integer.parseInt(ctx.pathParam("account_id"));
-        ctx.json(messageService.getMessagesByUser(userId));
+        int accountId = Integer.parseInt(ctx.pathParam("account_id"));
+        List<Message> messages = messageService.getMessagesByUser(accountId);
+        ctx.json(messages); // Always return 200 OK with message list (even if empty)
     }
-    */
-
 }
